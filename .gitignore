@@ -1,0 +1,6 @@
+#Virtual enviorement
+/venv
+#Checkpoints
+/checkpoints
+#data contains yolo.weights
+/data
