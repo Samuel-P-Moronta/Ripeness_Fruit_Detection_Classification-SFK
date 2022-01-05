@@ -1,6 +1,7 @@
 #Virtual enviorement
 /venv
 #Checkpoints
-/checkpoints
+/checkpoints/yolov4-416/variables
+/checkpoints/yolov4-416
 #data contains yolo.weights
-/data
+/data/yolov4.weights
