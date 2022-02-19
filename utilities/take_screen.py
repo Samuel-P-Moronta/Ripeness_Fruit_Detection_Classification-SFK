@@ -9,7 +9,7 @@ def get_frames(inputFile,outputFolder,step,count):
   frames_count = count
 
   currentframe = 0
-  frames_captured = 0
+  frames_captured = 1709
 
   #creating a folder
   try:  
@@ -33,7 +33,7 @@ def get_frames(inputFile,outputFolder,step,count):
           if currentframe > (step*frame_per_second):  
               currentframe = 0
               #saving the frames (screenshots)
-              name = r"C:\Users\SMORONTA\Documents\Datasets_ultimate\imagenes_tomadas\overripe_pineapple\overripe_pineapple_" + str(frames_captured) + '.jpg'
+              name = r"C:\Users\SMORONTA\Documents\Datasets_ultimate\imagenes_tomadas\ripe_papaya\ripe_papaya_" + str(frames_captured) + '.jpg'
               print ('Creating...' + name) 
               
               cv2.imwrite(name, frame)       
@@ -50,8 +50,10 @@ def get_frames(inputFile,outputFolder,step,count):
   cam.release()
   cv2.destroyAllWindows()
 
-input_file = r"C:\Users\SMORONTA\Pictures\Camera Roll\overripe_pineapple.mp4"
-output_file = r"C:\Users\SMORONTA\Documents\Datasets_ultimate\imagenes_tomadas\overripe_pineapple"
-count = 10000
-step = 0.3
-get_frames(input_file,output_file,step,count)
+
+if __name__ == "__main__":
+    input_file = r"C:\Users\SMORONTA\Pictures\Camera Roll\ripe_papaya\ripe_papaya_old_3.mp4"
+    output_file = r"C:\Users\SMORONTA\Documents\Datasets_ultimate\imagenes_tomadas\ripe_papaya"
+    count = 10000
+    step = 0.2
+    get_frames(input_file, output_file, step, count)

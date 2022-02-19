@@ -16,7 +16,7 @@ import numpy as np
 import methods
 
 
-def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe):
+def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe,q_cant_overripe):
     IOU_THRESHOLD = 0.45
     MAX_OUTOUT_SIZE_PER_CLASS = 50
     MAX_TOTAL_SIZE = 50
@@ -77,13 +77,14 @@ def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe):
         # count objects found
         counted_classes = methods.count_objects(pred_bbox, by_class=True)
         params = methods.get_parameters(pred_bbox)
-        all_object_cant, fruit_type, cant_ripe,cant_unripe = params
+        all_object_cant, fruit_type, cant_ripe,cant_unripe,cant_overripe = params
 
         #return params
         q_cant.put(all_object_cant)
         q_type.put(fruit_type)
         q_cant_ripe.put(cant_ripe)
         q_cant_unripe.put(cant_unripe)
+        q_cant_overripe.put(cant_overripe)
 
         fps = 1.0 / (time.time() - start_time)
         #print("FPS: %.2f" % fps)

@@ -74,19 +74,28 @@ def get_parameters(data):
 
     cant_unripe = 0
     cant_ripe = 0
+    cant_overripe = 0
 
     fruit_type = ""
 
+    #---------------------------------------------------------------------------
+    # pineapples
     for unripe_key_pineappe, unripe_value_pineapple in counted_classes.items():
         if unripe_key_pineappe == "unripe_pineapple":
             cant_unripe = unripe_value_pineapple
             fruit_type = "pineapple"
 
-    for ripe_key_pineapple, ripe_value_ripe in counted_classes.items():
+    for ripe_key_pineapple, ripe_value_pineapple in counted_classes.items():
         if ripe_key_pineapple == "ripe_pineapple":
-            cant_ripe = ripe_value_ripe
+            cant_ripe = ripe_value_pineapple
             fruit_type = "pineapple"
 
+    for overripe_key_pineapple, overripe_value_pineapple in counted_classes.items():
+        if overripe_key_pineapple == "overripe_pineapple":
+            cant_overripe = overripe_value_pineapple
+            fruit_type = "pineapple"
+    #--------------------------------------------------------------------------------
+    # papayas
     for unripe_key_papaya, unripe_value_papaya in counted_classes.items():
         if unripe_key_papaya == "unripe_papaya":
             cant_unripe = unripe_value_papaya
@@ -97,13 +106,19 @@ def get_parameters(data):
             cant_ripe = ripe_value_papaya
             fruit_type = "papaya"
 
+    for overripe_key_papaya, overripe_value_papaya in counted_classes.items():
+        if overripe_key_papaya == "overripe_papaya":
+            cant_overripe = overripe_value_papaya
+            fruit_type = "papaya"
+
+
     if all_object_cant != 0:
         #recognition_data =  {"fruit_cant": all_object_cant, "fruit_type": fruit_type, "Ripe cant": cant_ripe, "Unripe cant": cant_unripe}
         #json_recognition_data = json.dumps(recognition_data, indent=4, default=str)
-        return all_object_cant, fruit_type, cant_ripe, cant_unripe
+        return all_object_cant, fruit_type, cant_ripe, cant_unripe,cant_overripe
 
     else:
-        return 0,0,0,0
+        return 0,0,0,0,0
 
 def format_boxes(bboxes, image_height, image_width):
     """Helper method to convert bounding boxes from normalized
