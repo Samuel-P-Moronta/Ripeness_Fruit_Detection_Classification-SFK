@@ -25,7 +25,7 @@ def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe,q_cant_overrip
 
     # begin video capture
     try:
-        vid = cv2.VideoCapture(0)
+        vid = cv2.VideoCapture("http:/192.168.1.131:7070/?action=stream/0")
     except ValueError:
         print("Error")
 

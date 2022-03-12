@@ -1,11 +1,9 @@
 import socket
-from object_detection_classification import get_fruit_recognition
-
-import _thread
-from datetime import datetime, time
-import json, random
+import json
 import queue
 import threading
+from object_detection_classification import get_fruit_recognition
+
 
 HEADER = 64
 PORT = 6000
