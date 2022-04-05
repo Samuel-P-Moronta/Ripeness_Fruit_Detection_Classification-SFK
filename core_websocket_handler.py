@@ -9,8 +9,6 @@ import threading
 from threading import Thread
 import traceback
 
-from object_detection_classification import get_fruit_recognition
-import ML_socket_server as ML
 
 # ++++++++++++++++++++++++++++++++++++++
 #                                      #
@@ -58,67 +56,47 @@ def generate_container_data():
 
     return json_sensor_data
 
-
-def handle_client_ML(conn, addr, que_msg):
-    print(f"[NEW CONNECTION] {addr} connected.")
-
-    connected = True
-    while connected:
-        msg_length = conn.recv(HEADER).decode(FORMAT)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(FORMAT)
-            # Recibo todas las informaciones del reconocimiento
-            que_msg.put(msg)
-
-    conn.close()
-
-
 def send_sensor_data(ws):
     def run(*args):
         i = 0
         random.seed(datetime.now())
         temperature = round(random.uniform(30.00, 31.00), 2)
         humidity = round(random.uniform(60.00, 61.00), 2)
-
         server.listen()
-        q_msg = queue.Queue()
         conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client_ML, args=(conn, addr, q_msg))
-        thread.start()
+        print(f"[NEW CONNECTION] {addr} connected.")
+
         try:
             while True:
                 print("[GETTING] Getting info from ML client")
-                msg = q_msg.get()
-                json_object = json.loads(msg)
 
-                print(json_object)
-                print("[SENDING] Sending msg to backend")
+                msg_length = conn.recv(HEADER).decode(FORMAT)
+                if msg_length:
+                    msg_length = int(msg_length)
+                    # Recibo todas las informaciones del reconocimiento
+                    msg = conn.recv(msg_length).decode(FORMAT)
+                    json_object = json.loads(msg)
+                    fruit_cant = json_object["fruitCant"]
+                    fruit_type = json_object["fruitType"]
+                    cant_overripe = json_object["cantOverripe"]
+                    cant_ripe = json_object["cantRipe"]
+                    cant_unripe = json_object["cantUnripe"]
+                    deviceId = "1"
 
-                q_cant = json_object["fruitCant"]
-                q_fruitType = json_object["fruitType"]
-                q_cant_overripe = json_object["cantOverripe"]
-                q_cant_ripe = json_object["cantRipe"]
-                q_cantUnripe = json_object["cantUnripe"]
+                    reg_data = {
+                        "deviceId": deviceId,
+                        "temperature": temperature,
+                        "humidity": humidity,
+                        "fruitCant": fruit_cant,
+                        "fruitType": fruit_type,
+                        "cantOverripe": cant_overripe,
+                        "cantRipe": cant_ripe,
+                        "cantUnripe": cant_unripe
+                    }
+                    json_reg_data = json.dumps(reg_data, indent=4, default=str)
+                    ws.send(json_reg_data)
 
-                deviceId = "1"
-
-                reg_data = {
-                            "deviceId":deviceId,
-                            "temperature": temperature,
-                            "humidity": humidity,
-                            "fruitCant": q_cant,
-                            "fruitType": q_fruitType,
-                            "cantOverripe": q_cant_overripe,
-                            "cantRipe": q_cant_ripe,
-                            "cantUnripe": q_cantUnripe
-                }
-
-                json_reg_data = json.dumps(reg_data, indent=4, default=str)
-
-                ws.send(json_reg_data)
-                print("+++++++++++++++++++++++++++++++++++")
-                i = i + 1
+            conn.close()
             ws.close()
             print("thread terminating...")
 
@@ -149,7 +127,7 @@ def simulate_realtime_ml_data_1(ws):
                 "cantUnripe": unripe
             }
             json_reg_data = json.dumps(random_reg_data, indent=4, default=str)
-            time.sleep(10)
+            time.sleep(20)
             ws.send(json_reg_data)
         ws.close()
     _thread.start_new_thread(run, ())
@@ -213,21 +191,31 @@ def send_container_data(ws):
     def run(*args):
         i = 0
         while True:
+            print("DIGITE UN PESO: ")
+            x = input();
+            container_data = {
+                'containerId': "1",
+                'weight': x
+            }
+            json_sensor_data = json.dumps(container_data, indent=4, default=str)
+            ws.send(json_sensor_data)
+        """
+        while True:
             print("[*] Sending data # [{}] to container ".format(i))
 
-            weight_data_in = round(random.uniform(0.00, 5.00), 2)
+            weight_data_in = round(random.uniform(0, 5), 1)
             container_data = {
                 'containerId': "1",
                 'weight': weight_data_in
             }
             json_sensor_data = json.dumps(container_data, indent=4, default=str)
             time.sleep(10)
-            # websocket.
             ws.send(json_sensor_data)
             print("+++++++++++++++++++++++++++++++++++")
             i = i + 1
         # time.sleep(1)
         ws.close()
+        """
         print("thread terminating...")
 
     _thread.start_new_thread(run, ())
@@ -264,6 +252,6 @@ def connect_websocket_container():
 
 if __name__ == "__main__":
     "Threading to keep twice function running"
-    Thread(target=connect_websocket_container).start()
+    #Thread(target=connect_websocket_container).start()
     Thread(target=connect_websocket_shelf).start()
-    Thread(target=connect_websocket_shelf_simulate_1).start()
+    #Thread(target=connect_websocket_shelf_simulate_1).start()

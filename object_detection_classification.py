@@ -14,9 +14,21 @@ from PIL import Image
 import cv2
 import numpy as np
 import methods
+import socket
+import json
 
+HEADER = 64
+PORT = 6000
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!DISCONNECT"
+SERVER = "127.0.0.1"
+ADDR = (SERVER, PORT)
 
-def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe,q_cant_overripe):
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
+
+def get_fruit_recognition():
+
     IOU_THRESHOLD = 0.45
     MAX_OUTOUT_SIZE_PER_CLASS = 50
     MAX_TOTAL_SIZE = 50
@@ -25,7 +37,8 @@ def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe,q_cant_overrip
 
     # begin video capture
     try:
-        vid = cv2.VideoCapture("http:/192.168.1.131:7070/?action=stream/0")
+        vid = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+        #vid = cv2.VideoCapture("http:/192.168.1.131:7070/?action=stream/0")
     except ValueError:
         print("Error")
 
@@ -80,11 +93,33 @@ def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe,q_cant_overrip
         all_object_cant, fruit_type, cant_ripe,cant_unripe,cant_overripe = params
 
         #return params
+        #list_elements_recognition = [all_object_cant,fruit_type,cant_ripe,cant_unripe,cant_overripe]
+
+        #yield list_elements_recognition
+
+        reg_data = {"fruitCant": all_object_cant,
+                    "fruitType": fruit_type,
+                    "cantOverripe": cant_ripe,
+                    "cantRipe": cant_unripe,
+                    "cantUnripe": cant_overripe}
+
+        json_reg_data = json.dumps(reg_data, indent=4, default=str)
+        print(json_reg_data)
+        message = json_reg_data.encode(FORMAT)
+        msg_length = len(message)
+        send_length = str(msg_length).encode(FORMAT)
+        send_length += b' ' * (HEADER - len(send_length))
+        client.send(send_length)
+        print("[SENDING] Sending message to ML server...")
+        client.send(message)
+
+        """
         q_cant.put(all_object_cant)
         q_type.put(fruit_type)
         q_cant_ripe.put(cant_ripe)
         q_cant_unripe.put(cant_unripe)
         q_cant_overripe.put(cant_overripe)
+        """
 
         fps = 1.0 / (time.time() - start_time)
         #print("FPS: %.2f" % fps)
@@ -99,3 +134,7 @@ def get_fruit_recognition(q_cant,q_type,q_cant_ripe,q_cant_unripe,q_cant_overrip
         if cv2.waitKey(1) & 0xFF == ord('q'): break
 
     cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    print("[STARTING] client ML is starting...")
+    get_fruit_recognition()

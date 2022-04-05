@@ -18,11 +18,11 @@ client.connect(ADDR)
 
 def ml_send():
     # return params
-    q_cant = queue.Queue()
-    q_type = queue.Queue()
-    q_cant_ripe = queue.Queue()
-    q_cant_unripe = queue.Queue()
-    q_cant_overripe = queue.Queue()
+    q_cant = queue.Queue(maxsize=10)
+    q_type = queue.Queue(maxsize=10)
+    q_cant_ripe = queue.Queue(maxsize=10)
+    q_cant_unripe = queue.Queue(maxsize=10)
+    q_cant_overripe = queue.Queue(maxsize=10)
     t1 = threading.Thread(target=get_fruit_recognition, name=get_fruit_recognition,
                           args=(q_cant, q_type, q_cant_ripe, q_cant_unripe, q_cant_overripe))
     t1.start()
