@@ -21,7 +21,9 @@ HEADER = 64
 PORT = 6000
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = "127.0.0.1"
+SERVER = "192.168.1.109"
+#SERVER = "192.168.0.8"
+
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,13 +34,14 @@ def get_fruit_recognition():
     IOU_THRESHOLD = 0.45
     MAX_OUTOUT_SIZE_PER_CLASS = 50
     MAX_TOTAL_SIZE = 50
-    SCORE_THRESHOLD = 0.60
-    MODEL_FILE_NAME = r'C:\Users\SMORONTA\Desktop\Ripeness_Fruit_Detection_Classification-SFK\checkpoints\yolov4-416'
+    SCORE_THRESHOLD = 0.90
+    MODEL_FILE_NAME = r'C:\Users\yehud\Desktop\ProjectTesting\Ripeness_Fruit_Detection_Classification-SFK\checkpoints\yolov4-416'
 
     # begin video capture
     try:
-        vid = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-        #vid = cv2.VideoCapture("http:/192.168.1.131:7070/?action=stream/0")
+        #vid = cv2.VideoCapture(0)
+        vid = cv2.VideoCapture("http:/192.168.1.109:7070/?action=stream/0")
+
     except ValueError:
         print("Error")
 
@@ -47,9 +50,9 @@ def get_fruit_recognition():
 
     frame_num = 0
     # Loop for applying object detection
-
+    i = 0
     while True:
-
+        count = 0
         return_value, frame = vid.read()
         if return_value:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -99,9 +102,9 @@ def get_fruit_recognition():
 
         reg_data = {"fruitCant": all_object_cant,
                     "fruitType": fruit_type,
-                    "cantOverripe": cant_ripe,
-                    "cantRipe": cant_unripe,
-                    "cantUnripe": cant_overripe}
+                    "cantOverripe": cant_overripe,
+                    "cantRipe": cant_ripe,
+                    "cantUnripe": cant_unripe}
 
         json_reg_data = json.dumps(reg_data, indent=4, default=str)
         print(json_reg_data)
@@ -109,9 +112,13 @@ def get_fruit_recognition():
         msg_length = len(message)
         send_length = str(msg_length).encode(FORMAT)
         send_length += b' ' * (HEADER - len(send_length))
-        client.send(send_length)
+        if i==  150:
+            client.send(send_length)
         print("[SENDING] Sending message to ML server...")
-        client.send(message)
+        if i==150:
+            client.send(message)
+            i=0
+        i = i + 1
 
         """
         q_cant.put(all_object_cant)
@@ -132,7 +139,7 @@ def get_fruit_recognition():
         cv2.imshow("result", result)
 
         if cv2.waitKey(1) & 0xFF == ord('q'): break
-
+    #count = count + 1
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':

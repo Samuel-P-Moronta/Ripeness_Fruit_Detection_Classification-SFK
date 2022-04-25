@@ -4,8 +4,10 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/data/weight_py1" />
+      <excludeFolder url="file://$MODULE_DIR$/tf5" />
+      <excludeFolder url="file://$MODULE_DIR$/tf" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (Ripeness_Fruit_Detection_Classification-SFK) (2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
