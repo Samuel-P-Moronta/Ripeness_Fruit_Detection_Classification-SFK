@@ -15,4 +15,5 @@ overripe_papaya
 
 For more information send email to: smartfoodkeeperproject@gmail.com
 
-Dataset: https://www.kaggle.com/datasets/yehudyrodriguez/papayas-and-pineapples-labeled
+Dataset and training files: https://drive.google.com/drive/folders/1FbcJTJT5v5OKMLN9ee-91wX6WC0S-UBT?usp=drive_link
+
